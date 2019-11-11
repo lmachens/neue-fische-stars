@@ -1,3 +1,6 @@
+import { createStars } from "./lib/stars.js";
+import { resize, createCanvas, appendCanvas } from "./lib/canvas.js";
+
 // stars
 const starDensity = 2;
 const starRadius = 1;
@@ -24,7 +27,27 @@ const context = canvas.getContext("2d");
 const demo = document.querySelector("#demo");
 let stars;
 
-appendCanvas(demo);
+resize({ parent: demo, canvas });
+
+const numberOfStars = parseInt(
+  (starDensity * (canvas.width * canvas.height)) / 5000
+);
+stars = createStars({
+  canvas,
+  numberOfStars,
+  starRadius,
+  starRadiusJitter,
+  foregroundHue,
+  foregroundHueJitter,
+  foregroundSaturation,
+  foregroundSaturationJitter,
+  foregroundLightness,
+  foregroundLightnessJitter,
+  starVelocity,
+  starVelocityJitter
+});
+
+appendCanvas({ parent: demo, canvas });
 setStyles();
 
 let mx = 0;
@@ -64,8 +87,8 @@ function createFish() {
 function drawAll() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   fishes.forEach(draw);
-  fishes.forEach(fish => connections(fish, fishes));
-  stars.forEach(star => connections(star, stars));
+  // fishes.forEach(fish => connections(fish, fishes));
+  // stars.forEach(star => connections(star, stars));
   stars.forEach(draw);
 }
 
@@ -115,21 +138,6 @@ function connections(sourceStar, list) {
   });
 }
 
-function resize() {
-  canvas.width = demo.offsetWidth;
-  canvas.height = demo.offsetHeight;
-
-  const numberOfStars = parseInt(
-    (starDensity * (canvas.width * canvas.height)) / 5000
-  );
-  stars = createStars(numberOfStars);
-}
-
-function appendCanvas(demo) {
-  resize();
-  demo.appendChild(canvas);
-}
-
 function setStyles() {
   // styles
   canvas.style.backgroundColor =
@@ -140,44 +148,6 @@ function setStyles() {
     "%," +
     backgroundLightness +
     "%)";
-}
-
-function createStars(numberOfStars) {
-  return new Array(numberOfStars).fill().map((_, index) => ({
-    id: index,
-    x: random(0 + starRadius, canvas.width - starRadius),
-    y: random(0 + starRadius, canvas.height - starRadius),
-    r: starRadius * random(1 - starRadiusJitter, 1 + starRadiusJitter),
-    hue: foregroundHue + random(1, 360) * foregroundHueJitter * plusOrMinus(),
-    saturation:
-      foregroundSaturation *
-      random(1 - foregroundSaturationJitter, 1 + foregroundSaturationJitter),
-    lightness:
-      foregroundLightness *
-      random(1 - foregroundLightnessJitter, 1 + foregroundLightnessJitter),
-    opacity: 100,
-    vx:
-      starVelocity *
-      random(1 - starVelocityJitter, 1 + starVelocityJitter) *
-      plusOrMinus(),
-    vy:
-      starVelocity *
-      random(1 - starVelocityJitter, 1 + starVelocityJitter) *
-      plusOrMinus()
-  }));
-}
-function createCanvas() {
-  const canvas = document.createElement("canvas");
-  return canvas;
-}
-
-function random(min, max) {
-  return min + Math.random() * (max - min);
-}
-
-function plusOrMinus() {
-  if (Math.random() > 0.5) return -1;
-  else return 1;
 }
 
 function move(star) {
