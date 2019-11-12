@@ -7,7 +7,7 @@ const students = [
     dx: 0,
     dy: 0,
     size: 1,
-    name: "Omid Arzani"
+    name: "Lukas Kreidenweis"
   },
   {
     dx: -1.1,
@@ -55,11 +55,11 @@ const students = [
     dx: -6.8,
     dy: -2,
     size: 1,
-    name: "Lukas Kreidenweis"
+    name: "Omid Arzani"
   },
   {
     dx: -5.8,
-    dy: 0,
+    dy: 0.2,
     size: 1,
     name: "Philipp Mäcke"
   }
