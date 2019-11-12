@@ -11,3 +11,19 @@ export function resize({ parent, canvas }) {
 export function appendCanvas({ parent, canvas }) {
   parent.appendChild(canvas);
 }
+
+export function setStyles({
+  canvas,
+  backgroundHue,
+  backgroundSaturation,
+  backgroundLightness
+}) {
+  canvas.style.backgroundColor =
+    "hsl(" +
+    backgroundHue +
+    "," +
+    backgroundSaturation +
+    "%," +
+    backgroundLightness +
+    "%)";
+}

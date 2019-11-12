@@ -1,7 +1,70 @@
-import { createStars } from "./lib/stars.js";
-import { resize, createCanvas, appendCanvas } from "./lib/canvas.js";
+import { createStars, draw } from "./lib/stars.js";
+import { resize, createCanvas, appendCanvas, setStyles } from "./lib/canvas.js";
+import { drawFish, hightlightRandomStudent } from "./lib/fish.js";
 
-// stars
+const students = [
+  {
+    dx: 0,
+    dy: 0,
+    size: 1,
+    name: "Omid Arzani"
+  },
+  {
+    dx: -1.1,
+    dy: -3.2,
+    size: 1,
+    name: "Cristina Merisoiu"
+  },
+  {
+    dx: 5,
+    dy: 1.5,
+    size: 1,
+    name: "Hanna Frauenkorn"
+  },
+  {
+    dx: -5,
+    dy: -1.3,
+    size: 1,
+    name: "Jonas Munsch"
+  },
+  {
+    dx: 5.8,
+    dy: -1.6,
+    size: 1,
+    name: "Jose Antonio Teran"
+  },
+  {
+    dx: 3.9,
+    dy: -6.0,
+    size: 1,
+    name: "Jürgen Baltres"
+  },
+  {
+    dx: 4.6,
+    dy: 3.5,
+    size: 1,
+    name: "Julian Toscani"
+  },
+  {
+    dx: 1.9,
+    dy: 5.9,
+    size: 1,
+    name: "Lena Kastenmeier"
+  },
+  {
+    dx: -6.8,
+    dy: -2,
+    size: 1,
+    name: "Lukas Kreidenweis"
+  },
+  {
+    dx: -5.8,
+    dy: 0,
+    size: 1,
+    name: "Philipp Mäcke"
+  }
+];
+
 const starDensity = 2;
 const starRadius = 1;
 const starRadiusJitter = 0.5;
@@ -25,14 +88,12 @@ const canvas = createCanvas();
 const context = canvas.getContext("2d");
 
 const demo = document.querySelector("#demo");
-let stars;
-
 resize({ parent: demo, canvas });
 
 const numberOfStars = parseInt(
   (starDensity * (canvas.width * canvas.height)) / 5000
 );
-stars = createStars({
+const stars = createStars({
   canvas,
   numberOfStars,
   starRadius,
@@ -48,129 +109,33 @@ stars = createStars({
 });
 
 appendCanvas({ parent: demo, canvas });
-setStyles();
+setStyles({ canvas, backgroundHue, backgroundSaturation, backgroundLightness });
 
-let mx = 0;
-let my = 0;
+let mouseX = 0;
+let mouseY = 0;
 
-setInterval(drawAll, 15);
-
-window.addEventListener("resize", resize, false);
-window.addEventListener("mousemove", mouse, false);
-
-const fishes = createFish();
-
-function createFish() {
-  return [
-    [-50, 0],
-    [-60, 10],
-    [-60, -10],
-    [-30, 0],
-    [-35, 10],
-    [-35, -10],
-    [-40, 15],
-    [-40, -15]
-  ].map(([x, y], index) => ({
-    id: index,
-    r: 1,
-    saturation: 100,
-    hue: 11,
-    lightness: 61,
-    opacity: 100,
-    vx: 0,
-    vy: 0,
-    x: canvas.width / 2 - 100 + x,
-    y: canvas.height / 2 - 100 + y
-  }));
-}
-
-function drawAll() {
+setInterval(() => {
   context.clearRect(0, 0, canvas.width, canvas.height);
-  fishes.forEach(draw);
-  // fishes.forEach(fish => connections(fish, fishes));
   // stars.forEach(star => connections(star, stars));
-  stars.forEach(draw);
-}
+  stars.forEach(star => draw({ canvas, context, star }));
+  drawFish({ context, canvas, students, mouseX, mouseY });
+}, 15);
 
-function mouse(event) {
-  const rect = canvas.getBoundingClientRect();
-  (mx = event.clientX - rect.left), (my = event.clientY - rect.top);
-}
+window.addEventListener(
+  "resize",
+  () => {
+    resize({ parent: demo, canvas });
+  },
+  false
+);
+window.addEventListener(
+  "mousemove",
+  event => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+  },
+  false
+);
 
-function connections(sourceStar, list) {
-  const neighbors = list.filter(star => {
-    return (
-      star.id != sourceStar.id &&
-      Math.abs(sourceStar.x - star.x) < connectionRadius &&
-      Math.abs(sourceStar.y - star.y) < connectionRadius
-    );
-  });
-  let t;
-  sourceStar.opacity = neighbors.length / 10;
-  neighbors.forEach(neighbor => {
-    t = connectionOpacity;
-    if (
-      Math.abs(sourceStar.x - mx) < revealRadius &&
-      Math.abs(sourceStar.y - my) < revealRadius
-    ) {
-      t +=
-        1 -
-        (Math.abs(sourceStar.x - mx) + Math.abs(sourceStar.y - my)) /
-          2 /
-          revealRadius;
-    }
-    context.beginPath();
-    context.moveTo(sourceStar.x, sourceStar.y);
-    context.lineTo(neighbor.x, neighbor.y);
-    context.strokeStyle =
-      "hsla(" +
-      sourceStar.hue +
-      "," +
-      sourceStar.saturation +
-      "%," +
-      sourceStar.lightness +
-      "%," +
-      t +
-      ")";
-    context.lineWidth = connectionWidth;
-    context.stroke();
-    context.closePath();
-  });
-}
-
-function setStyles() {
-  // styles
-  canvas.style.backgroundColor =
-    "hsl(" +
-    backgroundHue +
-    "," +
-    backgroundSaturation +
-    "%," +
-    backgroundLightness +
-    "%)";
-}
-
-function move(star) {
-  if (star.x <= 0 + star.r || star.x >= canvas.width) star.vx = -star.vx;
-  if (star.y <= 0 + star.r || star.y >= canvas.height) star.vy = -star.vy;
-  star.x += star.vx;
-  star.y += star.vy;
-}
-
-function draw(star) {
-  move(star);
-  context.beginPath();
-  context.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
-  context.fillStyle =
-    "hsla(" +
-    star.hue +
-    "," +
-    star.saturation +
-    "%," +
-    star.lightness +
-    "%," +
-    (0.1 + star.opacity) +
-    ")";
-  context.fill();
-  context.closePath();
-}
+hightlightRandomStudent(students);
