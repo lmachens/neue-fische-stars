@@ -31,13 +31,13 @@ const students = [
     dx: 5.8,
     dy: -1.6,
     size: 1,
-    name: "Jose Antonio Teran"
+    name: "Jürgen Baltres"
   },
   {
     dx: 3.9,
     dy: -6.0,
     size: 1,
-    name: "Jürgen Baltres"
+    name: "Jose Antonio Teran"
   },
   {
     dx: 4.6,
