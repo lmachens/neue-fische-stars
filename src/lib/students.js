@@ -1,4 +1,4 @@
-import { getRandomItem, waitFor } from "./utils.js";
+import { getRandomItem, waitFor, random } from "./utils.js";
 
 export const students = [
   {
@@ -130,5 +130,5 @@ export async function hightlightRandomStudent(students) {
     student.size -= 0.02;
     await waitFor(10);
   }
-  setTimeout(() => hightlightRandomStudent(students), 2000);
+  setTimeout(() => hightlightRandomStudent(students), random(1500, 2500));
 }
