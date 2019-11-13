@@ -4,7 +4,12 @@ export function createCanvas() {
   return canvas;
 }
 
-export function resize({ width, height, canvas }) {
-  canvas.width = width;
-  canvas.height = height;
+export function resize({ app, canvas }) {
+  canvas.width = app.offsetWidth;
+  canvas.height = app.offsetHeight;
+}
+
+export function clear({ canvas }) {
+  const context = canvas.getContext("2d");
+  context.clearRect(0, 0, canvas.width, canvas.height);
 }

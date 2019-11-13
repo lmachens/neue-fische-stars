@@ -4,7 +4,7 @@ import {
   calculateNumberOfStars,
   move
 } from "./lib/stars.js";
-import { resize, createCanvas } from "./lib/canvas.js";
+import { resize, createCanvas, clear } from "./lib/canvas.js";
 import { drawFish } from "./lib/fish.js";
 import {
   students,
@@ -13,20 +13,17 @@ import {
 } from "./lib/students.js";
 
 const canvas = createCanvas();
-const context = canvas.getContext("2d");
 const app = document.querySelector(".app");
 
-resize({ canvas, width: app.offsetWidth, height: app.offsetHeight });
+resize({ app, canvas });
 app.appendChild(canvas);
 
 const numberOfStars = calculateNumberOfStars({
-  width: canvas.width,
-  height: canvas.height
+  canvas
 });
 
 const stars = createStars({
-  width: canvas.width,
-  height: canvas.height,
+  canvas,
   numberOfStars
 });
 
@@ -40,17 +37,17 @@ window.addEventListener("mousemove", event => {
 });
 
 window.addEventListener("resize", () => {
-  resize({ parent: app, canvas });
+  resize({ app, canvas });
 });
 
 setInterval(() => {
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  clear({ canvas });
   stars.forEach(star => {
-    move({ width: canvas.width, height: canvas.height, star });
-    draw({ context, star });
+    move({ canvas, star });
+    draw({ canvas, star });
   });
-  const { zoom } = drawFish({ context, canvas, students, mouseX, mouseY });
-  drawStudents({ students, context, canvas, zoom, mouseX, mouseY });
+  const { zoom } = drawFish({ canvas });
+  drawStudents({ students, canvas, zoom, mouseX, mouseY });
 }, 15);
 
 hightlightRandomStudent(students);

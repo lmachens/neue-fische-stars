@@ -88,14 +88,8 @@ function drawTooltip({ context, student, mouseX, mouseY }) {
   context.fillText(student.name, mouseX, mouseY - 10);
 }
 
-export function drawStudents({
-  students,
-  context,
-  canvas,
-  zoom,
-  mouseX,
-  mouseY
-}) {
+export function drawStudents({ students, canvas, zoom, mouseX, mouseY }) {
+  const context = canvas.getContext("2d");
   let closest;
   students.forEach(student => {
     const width = parseInt(

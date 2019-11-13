@@ -12,15 +12,15 @@ const foregroundHueJitter = 0;
 const foregroundSaturationJitter = 0;
 const foregroundLightnessJitter = 0.2;
 
-export function calculateNumberOfStars({ width, height }) {
-  return parseInt((starDensity * (width * height)) / 5000);
+export function calculateNumberOfStars({ canvas }) {
+  return parseInt((starDensity * (canvas.width * canvas.height)) / 5000);
 }
 
-export function createStars({ width, height, numberOfStars }) {
+export function createStars({ canvas, numberOfStars }) {
   return new Array(numberOfStars).fill().map((_, index) => ({
     id: index,
-    x: random(0 + starRadius, width - starRadius),
-    y: random(0 + starRadius, height - starRadius),
+    x: random(0 + starRadius, canvas.width - starRadius),
+    y: random(0 + starRadius, canvas.height - starRadius),
     r: starRadius * random(1 - starRadiusJitter, 1 + starRadiusJitter),
     hue: foregroundHue + random(1, 360) * foregroundHueJitter * plusOrMinus(),
     saturation:
@@ -41,18 +41,20 @@ export function createStars({ width, height, numberOfStars }) {
   }));
 }
 
-export function move({ width, height, star }) {
-  if (star.x <= 0 + star.r || star.x >= width) {
+export function move({ canvas, star }) {
+  if (star.x <= 0 + star.r || star.x >= canvas.width) {
     star.vx = -star.vx;
   }
-  if (star.y <= 0 + star.r || star.y >= height) {
+  if (star.y <= 0 + star.r || star.y >= canvas.height) {
     star.vy = -star.vy;
   }
   star.x += star.vx;
   star.y += star.vy;
 }
 
-export function draw({ context, star }) {
+export function draw({ canvas, star }) {
+  const context = canvas.getContext("2d");
+
   context.beginPath();
   context.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
   context.fillStyle =
