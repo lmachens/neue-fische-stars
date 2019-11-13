@@ -31,9 +31,8 @@ let mouseX = 0;
 let mouseY = 0;
 
 window.addEventListener("mousemove", event => {
-  const rect = canvas.getBoundingClientRect();
-  mouseX = event.clientX - rect.left;
-  mouseY = event.clientY - rect.top;
+  mouseX = event.clientX;
+  mouseY = event.clientY;
 });
 
 window.addEventListener("resize", () => {
