@@ -96,7 +96,7 @@ export function drawStudents({
   mouseX,
   mouseY
 }) {
-  let closestStudent;
+  let closest;
   students.forEach(student => {
     const width = parseInt(
       (Math.min(canvas.width / 2, canvas.height / 2) / 25) * student.size
@@ -111,12 +111,18 @@ export function drawStudents({
       width
     });
 
-    if (Math.abs(x - mouseX) < 15 && Math.abs(y - mouseY) < 15) {
-      closestStudent = student;
+    const dx = x - mouseX;
+    const dy = y - mouseY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < 15 && (!closest || distance < closest.distance)) {
+      closest = {
+        distance,
+        student
+      };
     }
   });
-  if (closestStudent) {
-    drawTooltip({ context, student: closestStudent, mouseX, mouseY });
+  if (closest) {
+    drawTooltip({ context, student: closest.student, mouseX, mouseY });
   }
 }
 
