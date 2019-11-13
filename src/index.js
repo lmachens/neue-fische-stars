@@ -23,6 +23,7 @@ const numberOfStars = calculateNumberOfStars({
   width: canvas.width,
   height: canvas.height
 });
+
 const stars = createStars({
   width: canvas.width,
   height: canvas.height,
@@ -32,9 +33,18 @@ const stars = createStars({
 let mouseX = 0;
 let mouseY = 0;
 
+window.addEventListener("mousemove", event => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = event.clientX - rect.left;
+  mouseY = event.clientY - rect.top;
+});
+
+window.addEventListener("resize", () => {
+  resize({ parent: app, canvas });
+});
+
 setInterval(() => {
   context.clearRect(0, 0, canvas.width, canvas.height);
-  // stars.forEach(star => connections(star, stars));
   stars.forEach(star => {
     move({ width: canvas.width, height: canvas.height, star });
     draw({ context, star });
@@ -42,15 +52,5 @@ setInterval(() => {
   const { zoom } = drawFish({ context, canvas, students, mouseX, mouseY });
   drawStudents({ students, context, canvas, zoom, mouseX, mouseY });
 }, 15);
-
-window.addEventListener("resize", () => {
-  resize({ parent: app, canvas });
-});
-
-window.addEventListener("mousemove", event => {
-  const rect = canvas.getBoundingClientRect();
-  mouseX = event.clientX - rect.left;
-  mouseY = event.clientY - rect.top;
-});
 
 hightlightRandomStudent(students);
