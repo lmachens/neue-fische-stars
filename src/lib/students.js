@@ -17,7 +17,7 @@ export const students = [
     dx: 5,
     dy: 1.5,
     size: 1,
-    name: "Hanna Frauenkorn"
+    name: "Hanna Frauenkron"
   },
   {
     dx: -5,
